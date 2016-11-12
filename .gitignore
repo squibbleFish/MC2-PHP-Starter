@@ -1,0 +1,5 @@
+vagrant.old
+.idea/*
+.vagrant/*
+Vagrantfile
+.DS_Store
