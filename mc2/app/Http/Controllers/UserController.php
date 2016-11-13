@@ -167,4 +167,39 @@ class UserController extends Controller
         }
 
     }
+
+    /**
+     * @return string
+     */
+    public function user_confirm() {
+        $code = $this->request->input('user_code');
+        $email = $this->request->input('email');
+        $user = null;
+        try {
+            $user = User::where([
+                [ 'email' , '=',  $email ],
+                [ 'tempPassword', '=', $code ]
+            ])->first();
+        }catch (\Exception $e ) {
+            LOG::error($e);
+        }
+
+        if ( is_null($user) ) {
+            return json_encode( array( 'success' => false, 'message' => 'user does not exist' ) );
+        }
+
+        try {
+            Alpha::where('code', $code )->update(['used' => true]);
+        } catch ( \Exception $e ) {
+            Log::error($e);
+        }
+
+        return json_encode( array(
+            'success' => true,
+            'message' => array(
+                'user' => $user
+            )
+        ) );
+
+    }
 }

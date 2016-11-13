@@ -19,6 +19,8 @@ $app->get('/', function () use ($app) {
 });
 
 $app->post("{$router}/{$api_v}/alpha-codes", 'UserController@alpha_hack');
+$app->get("{$router}/{$api_v}/user-confirm", 'UserController@user_confirm');
+
 
 /**
  * User Methods
