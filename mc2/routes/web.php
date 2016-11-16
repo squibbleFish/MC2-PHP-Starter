@@ -21,9 +21,8 @@ $app->get('/', function () use ($app) {
 $app->post("{$router}/{$api_v}/alpha-codes", 'UserController@alpha_hack');
 $app->get("{$router}/{$api_v}/user-confirm", 'UserController@user_confirm');
 
-
 /**
- * User Methods
+ * User Routes
  */
 $app->group( [
         'prefix'    => "{$router}/{$api_v}/user/{id}",
@@ -31,31 +30,29 @@ $app->group( [
     function()
     use ( $app ) {
 
-        $app->get( 'details', function( $id ) {
-            return 'Gets current user';
-        });
+        $app->get( 'details', 'UserController@get_user');
 
-        $app->put( 'edit', function( $id ) {
-            var_dump( $id );
-        });
+        $app->post( 'edit', 'UserController@edit_user');
 
+        $app->post('password-reset', 'UserController@update_password');
+
+        /**
+         * @todo some routes not fully integrated yet.
+         */
         $app->post( 'add', function() {
-            return 'New User';
         });
 
-        $app->post( 'authenticate', function( $id ) {
-
+        $app->post( 'authenticate', function() {
         });
 
         $app->post( 'alpha', function() {
-            return "Code to Hit";
         });
 
 });
 
 
 /**
- * Guardian Methods
+ * Guardian Routes
  */
 $app->group( [
         'prefix'    => "{$router}/{$api_v}/guardian/{id}",
@@ -65,9 +62,7 @@ $app->group( [
 
         $app->get( 'all', 'GuardiansController@get_all');
 
-
         $app->get( 'details', 'GuardiansController@get_single');
-
 
         $app->post( 'add', 'GuardiansController@add_new');
 
@@ -77,6 +72,9 @@ $app->group( [
 
 });
 
+/**
+ * Children routes
+ */
 $app->group([
         'prefix'    => "{$router}/{$api_v}/children/{id}",
     ],
@@ -105,6 +103,9 @@ $app->group([
         });
 });
 
+/**
+ * Classroom routes
+ */
 $app->group( [
         'prefix'    => "{$router}/{$api_v}/classroom/{id}",
     ],

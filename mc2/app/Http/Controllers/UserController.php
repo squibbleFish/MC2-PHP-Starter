@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Guardians;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 // Database Helpers
@@ -31,7 +32,7 @@ class UserController extends Controller
             'city'      => '',
             'state'     => '',
             'zip'       => '',
-            'lang'      => '',
+            'lng'      => '',
             'lat'       => ''
         ),
         'age'             => '',
@@ -42,7 +43,7 @@ class UserController extends Controller
         'maritalStatus'   => '',
 		'languages'       => array(),
         'host'            => false,
-        'backgroundCheck' =>  false,
+        'backgroundCheck' => false,
         'classrooms'      => array(),
         'notifications'   => array(),
         'ratings'         => 0,
@@ -52,10 +53,17 @@ class UserController extends Controller
     /**
      * @var array
      */
-    protected static $alpha_static = array(
+    protected static $alpha_schema = array(
         'email' => '',
         'code'  => '',
         'used'  => false
+    );
+
+    /**
+     * @var array
+     */
+    protected static $guardian_schema = array(
+
     );
 
     /**
@@ -93,10 +101,10 @@ class UserController extends Controller
             return json_encode( array( 'success' => false, 'message' => 'email missing' ) );
         }
 
-        self::$alpha_static['email'] = $this->request->input('email');
-        self::$alpha_static['code'] = $code;
+        self::$alpha_schema['email'] = $this->request->input('email');
+        self::$alpha_schema['code'] = $code;
 
-        $alpha_schema_keys = array_keys( self::$alpha_static );
+        $alpha_schema_keys = array_keys( self::$alpha_schema );
         $used_query = json_decode( Alpha::select('used')->where('used', true )->get() , true );
         if ( count($used_query) >= self::ALPHA_TOTAL ) {
             return json_encode( array( 'success' => false, 'message' => 'no vacancy' ) );
@@ -104,14 +112,14 @@ class UserController extends Controller
 
         $alpha = new Alpha();
         foreach ( $alpha_schema_keys as $keys ) {
-            $alpha->$keys = self::$alpha_static[$keys];
+            $alpha->$keys = self::$alpha_schema[$keys];
         }
         if ( !$alpha->save() ) {
             return json_encode( array( 'success' => false, 'message' => 'database error' ) );
         }
 
 
-        $new_user = $this->user_add( self::$alpha_static );
+        $new_user = $this->user_add( self::$alpha_schema );
 
         /**
          * @todo Add Code to send email
@@ -192,6 +200,7 @@ class UserController extends Controller
             Alpha::where('code', $code )->update(['used' => true]);
         } catch ( \Exception $e ) {
             Log::error($e);
+            return json_encode( array( 'success' => false, 'message' => $e ) );
         }
 
         return json_encode( array(
@@ -200,6 +209,87 @@ class UserController extends Controller
                 'user' => $user
             )
         ) );
+    }
+
+    /**
+     * @param $id
+     * @return string
+     * @todo this is plain string need a bcrypt function
+     */
+    public function update_password($id) {
+        $password = $this->request->input('password');
+        try {
+            User::where('_id', $id )->update([
+                ['password', $password],
+                ['tempPassword', '']
+            ]);
+        } catch ( \Exception $e ) {
+            Log::error($e);
+            return json_encode( array( 'success' => false, 'message' => $e ) );
+        }
+
+        return json_encode( array( 'success' => true , 'message' => 'password updated' ) );
+    }
+
+    /**
+     * @param $id
+     * @return mixed
+     */
+    public function get_user($id) {
+        return User::where('_id', $id)->first();
+    }
+
+    /**
+     * Edits profile information
+     * @param $id
+     * @return string
+     */
+    public function edit_user($id) {
+        $u = $this->get_user($id);
+        $u_keys = array_keys(self::$user_schema);
+
+        foreach ($u_keys as $key) {
+            if ( $key !== 'location' ) {
+                $u->$key = $this->request->has($key) ? $this->request->input($key) : $u->$key;
+            }
+        }
+
+        /**
+         * handling location separately since we need to find lat and long for our map
+         */
+        if ( $this->request->has('location') ) {
+            $add_input = $this->request->input('location');
+            $loc = $this->location_lookup( $this->request->input('location') );
+            $add_input['lng'] = $loc['lng'];
+            $add_input['lat'] = $loc['lat'];
+            $u->location = $add_input;
+        }
+
+        try {
+            $u->save();
+        } catch (\Exception $e ) {
+            Log::error($e);
+            return json_encode( array( 'success' => false, 'message' => $e ) );
+        }
+
+        return json_encode( array(
+            'success' => true,
+            'message' => array(
+                'user' => $u
+            )
+        ) );
 
     }
+
+    /**
+     * @param array $address
+     * @return mixed
+     */
+    public function location_lookup( $address = array() ) {
+        $loc = implode('+', $address);
+        $loc = str_replace(' ', '+', $loc );
+        $places_api = json_decode( file_get_contents( 'http://maps.google.com/maps/api/geocode/json?sensor=false&address='.$loc ), true );
+        return $places_api['results'][0]['geometry']['location'];
+    }
+
 }

@@ -6,9 +6,11 @@ use Illuminate\Auth\Authenticatable;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
-use Jenssegers\Mongodb\Eloquent\Model as Model;
+//use Jenssegers\Mongodb\Eloquent\Model as Model;
+use Moloquent\Eloquent\Model as Eloquent;
 
-class User extends Model implements AuthenticatableContract, AuthorizableContract
+
+class User extends Eloquent implements AuthenticatableContract, AuthorizableContract
 {
     use Authenticatable, Authorizable;
 
@@ -22,7 +24,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'name', 'email',
+        'email', 'fName', 'lName', 'uid'
     ];
 
     /**
@@ -33,4 +35,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $hidden = [
         'password',
     ];
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function guardians() {
+        return $this->embedsMany( 'App\Guardians' );
+    }
 }

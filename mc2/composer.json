@@ -9,10 +9,9 @@
         "laravel/lumen-framework": "5.3.*",
         "vlucas/phpdotenv": "~2.2",
         "illuminate/database": "^5.3",
-        "jenssegers/mongodb": "^3.1",
-        "jenssegers/mongodb-session": "^1.1",
-        "jenssegers/mongodb-sentry": "^1.0",
-        "sendgrid/sendgrid": "^5.1"
+        "sendgrid/sendgrid": "^5.1",
+        "tymon/jwt-auth": "^0.5.9",
+        "moloquent/moloquent": "^0.3.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
