@@ -14,7 +14,9 @@
 $api_v = 'v1';
 $router = 'api';
 
-
+/**
+ * routes that don't need a prefix
+ */
 $app->post("{$router}/{$api_v}/alpha-codes", 'UserController@alpha_hack');
 $app->get("{$router}/{$api_v}/user-confirm", 'UserController@user_confirm');
 $app->post("{$router}/{$api_v}/login", 'UserController@authenticate_user_pass');
@@ -79,26 +81,15 @@ $app->group([
     function()
     use ( $app ) {
 
-        $app->get( 'all', function ( $uid ) {
+        $app->get( 'all', 'ChildrenController@get_all' );
 
-        });
+        $app->get( 'details/{id}', 'ChildrenController@get_single' );
 
-        $app->get( 'details/{id}', function ( $uid, $id ) {
+        $app->post( 'add', 'ChildrenController@add_child' );
 
-        });
+        $app->put( 'edit/{id}', 'ChildrenController@edit_child' );
 
-        $app->post( 'add', function( $uid ) {
-
-        });
-
-        $app->put( 'edit/{id}', function ( $uid, $id ) {
-
-        });
-
-
-        $app->delete( 'remove/{id}', function( $uid, $id ) {
-
-        });
+        $app->delete( 'remove/{id}', 'ChildrenController@delete_child' );
 });
 
 /**
@@ -110,28 +101,20 @@ $app->group( [
     function ()
     use ( $app ) {
 
-        $app->get( 'all', function ( $uid ) {
+        $app->get( 'all', 'ClassroomsControllers@get_classrooms' );
 
-        });
+        $app->get( 'details/{id}', 'ClassroomsControllers@classroom_details' );
 
-        $app->get( 'details/{id}', function ( $uid, $id ) {
+        $app->post( 'add', 'ClassroomsControllers@add_classroom' );
 
-        });
+        $app->put( 'edit/{id}', 'ClassroomsControllers@edit_classroom' );
 
-        $app->post( 'add', function( $uid ) {
-
-        });
-
-        $app->put( 'edit/{id}', function ( $uid, $id ) {
-
-        });
-
-
-        $app->delete( 'remove/{id}', function( $uid, $id ) {
-
-        });
+        $app->delete( 'remove/{id}', 'ClassroomsControllers@remove_classroom' );
 });
 
+/**
+ * catch all for routes
+ */
 $app->get('/{any:.*}', function () use ($app) {
     return view( '404' );
 });
