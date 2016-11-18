@@ -20,6 +20,7 @@ $app->get('/', function () use ($app) {
 
 $app->post("{$router}/{$api_v}/alpha-codes", 'UserController@alpha_hack');
 $app->get("{$router}/{$api_v}/user-confirm", 'UserController@user_confirm');
+$app->post("{$router}/{$api_v}/login", 'UserController@authenticate_user_pass');
 
 /**
  * User Routes

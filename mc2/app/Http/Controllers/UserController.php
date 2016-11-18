@@ -218,9 +218,10 @@ class UserController extends Controller
      */
     public function update_password($id) {
         $password = $this->request->input('password');
+        $hashed = password_hash( $password, PASSWORD_BCRYPT );
         try {
             User::where('_id', $id )->update([
-                ['password', $password],
+                ['password', $hashed],
                 ['tempPassword', '']
             ]);
         } catch ( \Exception $e ) {
@@ -228,7 +229,41 @@ class UserController extends Controller
             return json_encode( array( 'success' => false, 'message' => $e ) );
         }
 
-        return json_encode( array( 'success' => true , 'message' => 'password updated' ) );
+        return json_encode( array(
+            'success' => true ,
+            'message' => 'password updated'
+        ) );
+    }
+
+    /**
+     * @return string
+     */
+    public function authenticate_user_pass() {
+        $email = $this->request->input('email');
+        $password = $this->request->input('password');
+
+        try {
+            $user = User::where('email', $email )->first();
+        } catch ( \Exception $e ) {
+            Log::error($e);
+            return json_encode( array( 'success' => false, 'message' => "{$email} user not found" ) );
+        }
+
+        if ( !password_verify($password, $user->password)) {
+            Log::info( "{$email} password not verified" );
+            return json_encode( array(
+                'success' => false,
+                'message' => "{$email} password not verified"
+            ) );
+        }
+
+        return json_encode( array(
+            'success' => true,
+            'message' =>  array(
+                'user' => $user
+            )
+        ) );
+
     }
 
     /**
