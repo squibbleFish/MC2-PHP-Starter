@@ -43,7 +43,6 @@ class GuardiansController extends Controller
     }
 
     public function get_all( $id ) {
-//        return User::where('_id', $id)->first();
         return Guardians::where('uid', $id)->first();
     }
 

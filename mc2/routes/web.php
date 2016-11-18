@@ -14,9 +14,6 @@
 $api_v = 'v1';
 $router = 'api';
 
-$app->get('/', function () use ($app) {
-    return $app->version();
-});
 
 $app->post("{$router}/{$api_v}/alpha-codes", 'UserController@alpha_hack');
 $app->get("{$router}/{$api_v}/user-confirm", 'UserController@user_confirm');
@@ -37,14 +34,14 @@ $app->group( [
 
         $app->post('password-reset', 'UserController@update_password');
 
+        $app->post( 'authenticate', 'UserController@authenticate_user_pass');
+
         /**
          * @todo some routes not fully integrated yet.
          */
         $app->post( 'add', function() {
         });
 
-        $app->post( 'authenticate', function() {
-        });
 
         $app->post( 'alpha', function() {
         });
@@ -77,29 +74,29 @@ $app->group( [
  * Children routes
  */
 $app->group([
-        'prefix'    => "{$router}/{$api_v}/children/{id}",
+        'prefix'    => "{$router}/{$api_v}/user/{uid}/children",
     ],
     function()
     use ( $app ) {
 
-        $app->get( 'all', function () {
+        $app->get( 'all', function ( $uid ) {
 
         });
 
-        $app->get( 'details', function ($id) {
+        $app->get( 'details/{id}', function ( $uid, $id ) {
 
         });
 
-        $app->post( 'add', function() {
+        $app->post( 'add', function( $uid ) {
 
         });
 
-        $app->put( 'edit', function ($id) {
+        $app->put( 'edit/{id}', function ( $uid, $id ) {
 
         });
 
 
-        $app->delete( 'remove', function() {
+        $app->delete( 'remove/{id}', function( $uid, $id ) {
 
         });
 });
@@ -108,31 +105,33 @@ $app->group([
  * Classroom routes
  */
 $app->group( [
-        'prefix'    => "{$router}/{$api_v}/classroom/{id}",
+        'prefix'    => "{$router}/{$api_v}/user/{uid}/classroom",
     ],
     function ()
     use ( $app ) {
 
-        $app->get( 'all', function () {
+        $app->get( 'all', function ( $uid ) {
 
         });
 
-        $app->get( 'details', function ($id) {
+        $app->get( 'details/{id}', function ( $uid, $id ) {
 
         });
 
-        $app->post( 'add', function() {
+        $app->post( 'add', function( $uid ) {
 
         });
 
-        $app->put( 'edit', function ($id) {
+        $app->put( 'edit/{id}', function ( $uid, $id ) {
 
         });
 
 
-        $app->delete( 'remove', function() {
+        $app->delete( 'remove/{id}', function( $uid, $id ) {
 
         });
 });
 
-
+$app->get('/{any:.*}', function () use ($app) {
+    return view( '404' );
+});

@@ -4,10 +4,10 @@ namespace App;
 use Moloquent\Eloquent\Model as Eloquent;
 
 /**
- * Class Alpha
+ * Class Classrooms
  * @package App
  */
-class Alpha extends Eloquent
+class Classrooms extends Eloquent
 {
     /**
      * @var string
@@ -17,7 +17,7 @@ class Alpha extends Eloquent
     /**
      * @var string
      */
-    protected $collection = 'alpha';
+    protected $collection = 'classrooms';
 
     /**
      * @var string

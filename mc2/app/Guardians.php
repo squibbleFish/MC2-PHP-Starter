@@ -1,9 +1,13 @@
 <?php
+
 namespace App;
 
-//use Jenssegers\Mongodb\Eloquent\Model as Model;
 use Moloquent\Eloquent\Model as Eloquent;
 
+/**
+ * Class Guardians
+ * @package App
+ */
 class Guardians extends Eloquent
 {
     /**
