@@ -27,8 +27,7 @@ $app->post("{$router}/{$api_v}/login", 'UserController@authenticate_user_pass');
 $app->group( [
         'prefix'    => "{$router}/{$api_v}/user/{id}",
     ],
-    function()
-    use ( $app ) {
+    function() use ( $app ) {
 
         $app->get( 'details', 'UserController@get_user');
 
@@ -57,8 +56,7 @@ $app->group( [
 $app->group( [
         'prefix'    => "{$router}/{$api_v}/guardian/{id}",
     ],
-    function ()
-    use ( $app ) {
+    function () use ( $app ) {
 
         $app->get( 'all', 'GuardiansController@get_all');
 
@@ -78,8 +76,7 @@ $app->group( [
 $app->group([
         'prefix'    => "{$router}/{$api_v}/user/{uid}/children",
     ],
-    function()
-    use ( $app ) {
+    function() use ( $app ) {
 
         $app->get( 'all', 'ChildrenController@get_all' );
 
@@ -98,8 +95,7 @@ $app->group([
 $app->group( [
         'prefix'    => "{$router}/{$api_v}/user/{uid}/classroom",
     ],
-    function ()
-    use ( $app ) {
+    function () use ( $app ) {
 
         $app->get( 'all', 'ClassroomsControllers@get_classrooms' );
 
@@ -110,6 +106,19 @@ $app->group( [
         $app->put( 'edit/{id}', 'ClassroomsControllers@edit_classroom' );
 
         $app->delete( 'remove/{id}', 'ClassroomsControllers@remove_classroom' );
+});
+
+/**
+ * Payment route for
+ */
+$app->group([
+        'prefix'    => "{$router}/{$api_v}/user/{uid}/payments"
+    ],
+    function () use ( $app) {
+
+        $app->post( 'process_payment', function ( $uid ) {
+
+        } );
 });
 
 /**

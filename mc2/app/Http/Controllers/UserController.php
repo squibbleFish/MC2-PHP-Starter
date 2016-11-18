@@ -46,6 +46,7 @@ class UserController extends Controller
         'backgroundCheck' => false,
         'classrooms'      => array(),
         'notifications'   => array(),
+        'totalHours'      => 0,
         'ratings'         => 0,
 		'reviews'         => 0
     );
