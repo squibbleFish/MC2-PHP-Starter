@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "bb078026006c972faa45c7607cc105a2",
-    "content-hash": "7911c83df68679b406998e8457596066",
+    "hash": "5dbe5c38403c32cf03a1310b860322a3",
+    "content-hash": "4fbe940d23982753618500704f73ff0c",
     "packages": [
         {
             "name": "doctrine/inflector",
@@ -1787,6 +1787,55 @@
             "time": "2016-10-10 12:19:37"
         },
         {
+            "name": "rmccue/requests",
+            "version": "v1.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rmccue/Requests.git",
+                "reference": "87932f52ffad70504d93f04f15690cf16a089546"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rmccue/Requests/zipball/87932f52ffad70504d93f04f15690cf16a089546",
+                "reference": "87932f52ffad70504d93f04f15690cf16a089546",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2"
+            },
+            "require-dev": {
+                "requests/test-server": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Requests": "library/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "ISC"
+            ],
+            "authors": [
+                {
+                    "name": "Ryan McCue",
+                    "homepage": "http://ryanmccue.info"
+                }
+            ],
+            "description": "A HTTP library written in PHP, for human beings.",
+            "homepage": "http://github.com/rmccue/Requests",
+            "keywords": [
+                "curl",
+                "fsockopen",
+                "http",
+                "idna",
+                "ipv6",
+                "iri",
+                "sockets"
+            ],
+            "time": "2016-10-13 00:11:37"
+        },
+        {
             "name": "sendgrid/php-http-client",
             "version": "3.5.0",
             "source": {
@@ -1840,21 +1889,21 @@
         },
         {
             "name": "sendgrid/sendgrid",
-            "version": "5.1.1",
+            "version": "5.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sendgrid/sendgrid-php.git",
-                "reference": "dfcd38ca380a8257e5924a83c5861a096cd66aac"
+                "reference": "46f85e69ec6a36d4674e7131e442fbecdaa5d183"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sendgrid/sendgrid-php/zipball/dfcd38ca380a8257e5924a83c5861a096cd66aac",
-                "reference": "dfcd38ca380a8257e5924a83c5861a096cd66aac",
+                "url": "https://api.github.com/repos/sendgrid/sendgrid-php/zipball/46f85e69ec6a36d4674e7131e442fbecdaa5d183",
+                "reference": "46f85e69ec6a36d4674e7131e442fbecdaa5d183",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.6",
-                "sendgrid/php-http-client": "~3.4"
+                "sendgrid/php-http-client": "~3.5"
             },
             "replace": {
                 "sendgrid/sendgrid-php": "*"
@@ -1882,7 +1931,7 @@
                 "send",
                 "sendgrid"
             ],
-            "time": "2016-10-11 21:24:55"
+            "time": "2016-11-17 23:05:01"
         },
         {
             "name": "symfony/console",

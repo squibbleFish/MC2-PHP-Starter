@@ -8,6 +8,8 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Moloquent\Eloquent\Model as Eloquent;
 
+use App\Classrooms;
+
 /**
  * Class User
  * @package App
@@ -54,5 +56,13 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
      */
     public function guardians() {
         return $this->embedsMany( 'App\Guardians' );
+    }
+
+    /**
+     * @return mixed
+     */
+    public function classrooms() {
+        return $this->hasMany( 'Classrooms' );
+//        return $this->hasMany( 'Classrooms' )->where('users._id', '=', 'classrooms._id');
     }
 }

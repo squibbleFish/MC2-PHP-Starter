@@ -1,14 +1,16 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Guardians;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+
 // Database Helpers
 use App\User as User;
 use App\Alpha as Alpha;
+use App\Guardians as Guardians;
 use Mockery\CountValidator\Exception;
 use Log;
+use Requests;
 
 /**
  * Class UserController
@@ -93,6 +95,14 @@ class UserController extends Controller
     }
 
     /**
+     * @param $id
+     * @return mixed
+     */
+    public function get_user($id) {
+        return User::where('_id', $id)->first();
+    }
+
+    /**
      * @return string
      */
     public function alpha_hack() {
@@ -123,31 +133,19 @@ class UserController extends Controller
         $new_user = $this->user_add( self::$alpha_schema );
 
         /**
-         * @todo Add Code to send email
+         * send out email for all new users
          */
-//        if ( $new_user ) {
-//                //
-//            $mail_api = env('SEND_GRID');
-//            $from = new SendGrid\Email(null, "test@example.com");
-//            $subject = "Hello World from the SendGrid PHP Library!";
-//            $to = new SendGrid\Email(null, "test@example.com");
-//            $content = new SendGrid\Content("text/plain", "Hello, Email!");
-//            $mail = new SendGrid\Mail($from, $subject, $to, $content);
-//
-//            $apiKey = getenv('SENDGRID_API_KEY');
-//            $sg = new \SendGrid($apiKey);
-//
-//            $response = $sg->client->mail()->send()->post($mail);
-//            echo $response->statusCode();
-//            echo $response->headers();
-//            echo $response->body();
-//        }
+        if ( $new_user ) {
+            $email = new Mail( $this );
+            Log::info( "email_response: {$email}" );
+        }
 
         return json_encode( array(
             'success' => true,
             'message' => array(
-                'user' => $this->request->input('email'),
-                'code' => $code
+                'user'  => $this->request->input('email'),
+                'code'  => $code,
+                'email' => $email
             )
         ) );
 
@@ -215,7 +213,6 @@ class UserController extends Controller
     /**
      * @param $id
      * @return string
-     * @todo this is plain string need a bcrypt function
      */
     public function update_password($id) {
         $password = $this->request->input('password');
@@ -268,14 +265,6 @@ class UserController extends Controller
     }
 
     /**
-     * @param $id
-     * @return mixed
-     */
-    public function get_user($id) {
-        return User::where('_id', $id)->first();
-    }
-
-    /**
      * Edits profile information
      * @param $id
      * @return string
@@ -295,7 +284,7 @@ class UserController extends Controller
          */
         if ( $this->request->has('location') ) {
             $add_input = $this->request->input('location');
-            $loc = $this->location_lookup( $this->request->input('location') );
+            $loc = json_decode( $this->location_lookup( $this->request->input('location') ), true ) ;
             $add_input['lng'] = $loc['lng'];
             $add_input['lat'] = $loc['lat'];
             $u->location = $add_input;
@@ -322,10 +311,17 @@ class UserController extends Controller
      * @return mixed
      */
     public function location_lookup( $address = array() ) {
+
+        //@todo just for testing
+        if ( empty( $address ) ) {
+            $address = $this->request->input('location');
+        }
+
         $loc = implode('+', $address);
         $loc = str_replace(' ', '+', $loc );
-        $places_api = json_decode( file_get_contents( 'http://maps.google.com/maps/api/geocode/json?sensor=false&address='.$loc ), true );
-        return $places_api['results'][0]['geometry']['location'];
+        $res = Requests::get( "http://maps.google.com/maps/api/geocode/json?sensor=false&address={$loc}");
+        $body = json_decode( $res->body, true );
+        return $body['results'][0]['geometry']['location'];
     }
 
 }
