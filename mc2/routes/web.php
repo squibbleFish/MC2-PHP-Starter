@@ -99,15 +99,15 @@ $app->group( [
     ],
     function () use ( $app ) {
 
-        $app->get( 'all', 'ClassroomsControllers@get_classrooms' );
+        $app->get( 'all', 'ClassroomsController@get_classrooms' );
 
-        $app->get( 'details/{id}', 'ClassroomsControllers@classroom_details' );
+        $app->get( 'details/{id}', 'ClassroomsController@classroom_details' );
 
-        $app->post( 'add', 'ClassroomsControllers@add_classroom' );
+        $app->post( 'add', 'ClassroomsController@add_classroom' );
 
-        $app->put( 'edit/{id}', 'ClassroomsControllers@edit_classroom' );
+        $app->post( 'edit/{id}', 'ClassroomsController@edit_classroom' );
 
-        $app->delete( 'remove/{id}', 'ClassroomsControllers@remove_classroom' );
+        $app->delete( 'remove/{id}', 'ClassroomsController@remove_classroom' );
 });
 
 /**

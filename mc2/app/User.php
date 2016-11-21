@@ -9,6 +9,8 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Moloquent\Eloquent\Model as Eloquent;
 
 use App\Classrooms;
+use App\Children;
+use App\Guardians;
 
 /**
  * Class User
@@ -55,14 +57,20 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function guardians() {
-        return $this->embedsMany( 'App\Guardians' );
+        return $this->hasMany( 'App\Guardians' );
     }
 
     /**
-     * @return mixed
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function classrooms() {
-        return $this->hasMany( 'Classrooms' );
-//        return $this->hasMany( 'Classrooms' )->where('users._id', '=', 'classrooms._id');
+        return $this->hasMany( 'App\Classrooms' );
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function children() {
+        return $this->hasMany('App\Children');
     }
 }

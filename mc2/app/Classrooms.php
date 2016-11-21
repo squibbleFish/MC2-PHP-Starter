@@ -3,6 +3,9 @@ namespace App;
 
 use Moloquent\Eloquent\Model as Eloquent;
 
+use App\User;
+use App\Children;
+
 /**
  * Class Classrooms
  * @package App
@@ -28,6 +31,13 @@ class Classrooms extends Eloquent
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function user() {
-        return $this->hasOne('User');
+        return $this->hasOne('App\User');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function children() {
+        return $this->hasMany('App\Children');
     }
 }

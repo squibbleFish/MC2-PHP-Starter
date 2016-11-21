@@ -42,4 +42,11 @@ class Guardians extends Eloquent
         return $this->embedsOne('App\User');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function children() {
+        return $this->hasMany('Children');
+    }
+
 }

@@ -284,7 +284,7 @@ class UserController extends Controller
          */
         if ( $this->request->has('location') ) {
             $add_input = $this->request->input('location');
-            $loc = json_decode( $this->location_lookup( $this->request->input('location') ), true ) ;
+            $loc = $this->location_lookup( $this->request->input('location') );
             $add_input['lng'] = $loc['lng'];
             $add_input['lat'] = $loc['lat'];
             $u->location = $add_input;
