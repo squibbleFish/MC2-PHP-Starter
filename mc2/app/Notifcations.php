@@ -4,11 +4,7 @@ namespace App;
 
 use Moloquent\Eloquent\Model as Eloquent;
 
-/**
- * Class Children
- * @package App
- */
-class Children extends Eloquent
+class Notifcations extends Eloquent
 {
     /**
      * @var string
@@ -18,7 +14,7 @@ class Children extends Eloquent
     /**
      * @var string
      */
-    protected $collection = 'children';
+    protected $collection = 'notifications';
 
     /**
      * @var string
@@ -29,14 +25,8 @@ class Children extends Eloquent
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function users() {
-        return $this->belongsToMany('App\Users');
+        return $this->hasMany('App\Users');
     }
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function classrooms() {
-        return $this->embedsMany('App\Classrooms');
-    }
 
 }

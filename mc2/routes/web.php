@@ -66,7 +66,7 @@ $app->group( [
 
         $app->post( 'add', 'GuardiansController@add_new');
 
-        $app->put( 'edit/{id}', 'GuardiansController@edit_details');
+        $app->post( 'edit/{id}', 'GuardiansController@edit_details');
 
         $app->delete( 'remove/{id}', 'GuardiansController@remove_guardian');
 

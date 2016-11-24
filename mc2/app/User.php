@@ -11,6 +11,8 @@ use Moloquent\Eloquent\Model as Eloquent;
 use App\Classrooms;
 use App\Children;
 use App\Guardians;
+use App\Connections;
+use App\Notifcations;
 
 /**
  * Class User
@@ -72,5 +74,19 @@ class User extends Eloquent implements AuthenticatableContract, AuthorizableCont
      */
     public function children() {
         return $this->hasMany('App\Children');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function notifications() {
+        return $this->hasMany('App\Notifications');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function connections() {
+        return $this->hasMany('App\Connections');
     }
 }

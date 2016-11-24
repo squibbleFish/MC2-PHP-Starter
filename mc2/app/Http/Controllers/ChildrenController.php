@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Mail;
+use App\Http\Controllers\ClassroomsController;
+use App\Http\Controllers\GuardiansController;
+
 use App\Children;
 use App\Guardians;
 use App\Classrooms;
 use App\User;
+use App\Notifcations;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -25,6 +30,27 @@ class ChildrenController extends Controller
     protected $response;
 
     /**
+     * @var array
+     */
+    protected static $child_schema = array(
+        'fName'             => '',
+        'lName'             => '',
+        'email'             => '',
+        'age'               => '',
+        'health'            => array(
+            'allergies'  => '',
+            'conditions' => '',
+            'details'    => ''
+        ),
+        'emergency_contact' => array(
+            'fName'      => '',
+            'lName'      => '',
+            'email'      => '',
+            'phone'      => ''
+        )
+    );
+
+    /**
      * ChildrenController constructor.
      * @param Request $request
      * @param Response $response
@@ -36,10 +62,48 @@ class ChildrenController extends Controller
 
     /**
      * @param $uid
+     * @return string
+     */
+    public function add_child( $uid ) {
+        $c = new Children();
+        $u = User::where( '_id', $uid )->first();
+
+        $c->fName                     = $this->request->input('fName');
+        $c->lName                     = $this->request->input('lName');
+        $c->email                     = $this->request->input('email');
+        $c->age                       = $this->request->input('age');
+        $c->health['allergies']       = $this->request->input('allergies');
+        $c->health['conditions']      = $this->request->input('conditions');
+        $c->health['details']         = $this->request->input('details');
+        $c->emergencyContact['fName'] = $this->request->input('cFName');
+        $c->emergencyContact['lName'] = $this->request->input('cLName');
+        $c->emergencyContact['email'] = $this->request->input('cEmail');
+        $c->emergencyContact['phone'] = $this->request->input('cPhone');
+
+        try {
+            $c = $u->children()->save($c);
+        } catch ( \Exception $e ) {
+            Log::error( "Database Error: {$e}" );
+            return json_encode( array(
+                'success' => false,
+                'message' => $e
+            ) );
+        }
+
+        return json_encode( array(
+            'success' => true,
+            'message' => array(
+                'child' => $c
+            )
+        ) );
+    }
+
+    /**
+     * @param $uid
      * @return mixed
      */
     public function get_all( $uid ) {
-        return Children::where( 'uid', $uid )->first();
+        return Children::where( 'user_id', $uid )->first();
     }
 
     /**
@@ -49,8 +113,8 @@ class ChildrenController extends Controller
      */
     public function get_single( $uid, $id ) {
         return Children::where([
-            ['uid', $uid],
-            ['id', $id]
+            ['user_id', $uid],
+            ['_id', $id]
         ])->first();
     }
 
@@ -60,8 +124,29 @@ class ChildrenController extends Controller
      * @return string
      */
     public function edit_child( $uid, $id ) {
+        $c = User::where('_id', $uid )->first()->children()->where('_id', $id)->first();
 
-        $c = array();
+        $c->fName                     = $this->request->has('fName')      ? $this->request->input('fName')      : $c->fName;
+        $c->lName                     = $this->request->has('lName')      ? $this->request->input('lName')      : $c->lName;
+        $c->email                     = $this->request->has('email')      ? $this->request->input('email')      : $c->email;
+        $c->age                       = $this->request->has('age')        ? $this->request->input('age')        : $c->age;
+        $c->health['allergies']       = $this->request->has('allergies')  ? $this->request->input('allergies')  : $c->health['allergies'];
+        $c->health['conditions']      = $this->request->has('conditions') ? $this->request->input('conditions') : $c->health['conditions'];
+        $c->health['details']         = $this->request->has('details')    ? $this->request->input('details')    : $c->health['details'];
+        $c->emergencyContact['fName'] = $this->request->has('cFName')     ? $this->request->input('cFName')     : $c->emergencyContact['fName'];
+        $c->emergencyContact['lName'] = $this->request->has('cLName')     ? $this->request->input('cLName')     : $c->emergencyContact['lName'];
+        $c->emergencyContact['email'] = $this->request->has('cEmail')     ? $this->request->input('cEmail')     : $c->emergencyContact['email'];
+        $c->emergencyContact['phone'] = $this->request->has('cPhone')     ? $this->request->input('cPhone')     : $c->emergencyContact['phone'];
+
+        try {
+            $c = $c->update();
+        } catch (\Exception $e ) {
+            Log::error( "Database Error: {$e}" );
+            return json_encode( array(
+                'success' => false,
+                'message' => $e
+            ) );
+        }
 
         return json_encode( array(
             'success' => true,
@@ -71,21 +156,6 @@ class ChildrenController extends Controller
         ) );
     }
 
-    /**
-     * @param $uid
-     * @return string
-     */
-    public function add_child( $uid ) {
-
-        $c = array();
-
-        return json_encode( array(
-            'success' => true,
-            'message' => array(
-                'child' => $c
-            )
-        ) );
-    }
 
     /**
      * @param $uid
@@ -94,7 +164,17 @@ class ChildrenController extends Controller
      */
     public function delete_child( $uid, $id ) {
 
-        $c = array();
+        $c = User::where('_id', $uid)->first()->children()->where('_id', $id)->first();
+
+        try {
+            $c->delete();
+        } catch ( \Exception $e ) {
+            Log::error( "Database Error: {$e}" );
+            return json_encode( array(
+                'success' => false,
+                'message' => $e
+            ) );
+        }
 
         return json_encode( array(
             'success' => true,
@@ -102,6 +182,16 @@ class ChildrenController extends Controller
                 'child' => $c
             )
         ) );
+    }
+
+    /**
+     * Registers child for class / time slot
+     * @todo Add notification of successful registration
+     * @param $uid
+     * @param $id
+     */
+    public function register_child( $uid, $id ) {
+        
     }
 
 }
