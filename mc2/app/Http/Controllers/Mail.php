@@ -13,7 +13,7 @@ class Mail extends Controller
 {
 
     /**
-     * @var User
+     * @var
      */
     protected $user;
 
@@ -29,9 +29,9 @@ class Mail extends Controller
 
     /**
      * Mail constructor.
-     * @param User $user
+     * @param $user
      */
-    public function __construct(UserController $user){
+    public function __construct( $user ){
         $this->user = $user;
     }
 
@@ -46,7 +46,7 @@ class Mail extends Controller
 
         $subject = "Welcome to My Community Classroom";
         // Name && Email
-        $to = new SendGrid\Email('Name', "test@example.com");
+        $to = new SendGrid\Email('Name', "stephen@squibble-fish.com");
 
         // @todo needs to be customized based upon type of mail we are sending
         $content = new SendGrid\Content("text/plain", "Hello, Email!");
@@ -54,11 +54,9 @@ class Mail extends Controller
         $mail = new SendGrid\Mail($from, $subject, $to, $content);
 
         // @todo needs to be customized based upon type of mail we are sending
-        $mail->setTemplateId("13b8f94f-bcae-4ec6-b752-70d6cb59f932");
+//        $mail->setTemplateId("13b8f94f-bcae-4ec6-b752-70d6cb59f932");
 
-        $apiKey = $mail_api;
-
-        $sg = new \SendGrid($apiKey);
+        $sg = new \SendGrid($mail_api);
 
         $response = $sg->client->mail()->send()->post($mail);
         $res = array(
@@ -66,6 +64,7 @@ class Mail extends Controller
             'headers'     => $response->headers(),
             'body'        => $response->body(),
         );
+
         return json_encode($res);
     }
 }

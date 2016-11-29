@@ -9,6 +9,7 @@ use App\User as User;
 use App\Alpha as Alpha;
 use App\Guardians as Guardians;
 use Mockery\CountValidator\Exception;
+use SendGrid;
 use Log;
 use Requests;
 
@@ -129,15 +130,41 @@ class UserController extends Controller
             return json_encode( array( 'success' => false, 'message' => 'database error' ) );
         }
 
-
         $new_user = $this->user_add( self::$alpha_schema );
 
         /**
          * send out email for all new users
          */
         if ( $new_user ) {
-            $email = new Mail( $this );
-            Log::info( "email_response: {$email}" );
+            $email_to = array( 'email' => self::$alpha_schema['email'], 'alpha_code' => self::$alpha_schema['code'] );
+
+
+            $mail_api = env('SEND_GRID');
+            // name && email
+            $from = new SendGrid\Email('Team', "noreply@mycommunityclassroom.com");
+
+            $subject = "Welcome to My Community Classroom";
+            // Name && Email
+            $to = new SendGrid\Email('Name', self::$alpha_schema['email']);
+            $content_string = "Welcome! Please use these params to confirm this testing alpha account. user_code={$code}&email={$email_to['email']}";
+            // @todo needs to be customized based upon type of mail we are sending
+            $content = new SendGrid\Content( "text/plain", $content_string );
+
+            $mail = new SendGrid\Mail($from, $subject, $to, $content);
+
+            // @todo needs to be customized based upon type of mail we are sending
+//        $mail->setTemplateId("13b8f94f-bcae-4ec6-b752-70d6cb59f932");
+
+            $sg = new \SendGrid($mail_api);
+
+            $response = $sg->client->mail()->send()->post($mail);
+            $res = array(
+                'status_code' => $response->statusCode(),
+                'headers'     => $response->headers(),
+                'body'        => $response->body(),
+            );
+
+            Log::info( "email_response: " . json_encode( $res ) );
         }
 
         return json_encode( array(
@@ -145,7 +172,7 @@ class UserController extends Controller
             'message' => array(
                 'user'  => $this->request->input('email'),
                 'code'  => $code,
-                'email' => $email
+                'email' => $res
             )
         ) );
 

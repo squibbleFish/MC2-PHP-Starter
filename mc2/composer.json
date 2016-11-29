@@ -12,7 +12,8 @@
         "sendgrid/sendgrid": "^5.1",
         "tymon/jwt-auth": "^0.5.9",
         "moloquent/moloquent": "^0.3.0",
-        "rmccue/requests": "^1.7"
+        "rmccue/requests": "^1.7",
+        "heroku/heroku-buildpack-php": "^115.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
