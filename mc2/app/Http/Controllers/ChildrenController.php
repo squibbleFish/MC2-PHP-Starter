@@ -191,7 +191,7 @@ class ChildrenController extends Controller
      * @param $id
      */
     public function register_child( $uid, $id ) {
-        
+
     }
 
 }
