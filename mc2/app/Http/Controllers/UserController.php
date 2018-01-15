@@ -245,7 +245,7 @@ class UserController extends Controller
         $password = $this->request->input('password');
         $hashed = password_hash( $password, PASSWORD_BCRYPT );
         try {
-            User::where('_id', $id )->update([
+            $user = User::where('_id', $id )->update([
                 ['password', $hashed],
                 ['tempPassword', '']
             ]);
@@ -253,7 +253,6 @@ class UserController extends Controller
             Log::error($e);
             return json_encode( array( 'success' => false, 'message' => $e ) );
         }
-
         return json_encode( array(
             'success' => true ,
             'message' => 'password updated'
